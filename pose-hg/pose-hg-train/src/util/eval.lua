@@ -8,7 +8,7 @@ function calcDists(preds, label, normalize)
     for i = 1,preds:size(1) do
         for j = 1,preds:size(2) do
             if label[i][j][1] > 1 and label[i][j][2] > 1 then
-                dists[j][i] = torch.dist(label[i][j],preds[i][j])/normalize[i]
+                dists[j][i] = torch.dist(label[i][j],preds[i][j])/(normalize[i] + 0.0001)
             else
                 dists[j][i] = -1
             end
@@ -30,7 +30,7 @@ function distAccuracy(dists, thr)
     -- Return percentage below threshold while ignoring values with a -1
     if not thr then thr = .5 end
     if torch.ne(dists,-1):sum() > 0 then
-        return dists:le(thr):eq(dists:ne(-1)):sum() / dists:ne(-1):sum()
+        return dists:le(thr):eq(dists:ne(-1)):sum() / (dists:ne(-1):sum() + 0.0001)
     else
         return -1
     end
@@ -52,14 +52,14 @@ function heatmapAccuracy(output, label, thr, idxs)
     	    if acc[i+1] >= 0 then avgAcc = avgAcc + acc[i+1]
             else badIdxCount = badIdxCount + 1 end
         end
-        acc[1] = avgAcc / (dists:size(1) - badIdxCount)
+        acc[1] = avgAcc / (dists:size(1) - badIdxCount + 0.0001)
     else
         for i = 1,#idxs do
             acc[i+1] = distAccuracy(dists[idxs[i]])
 	    if acc[i+1] >= 0 then avgAcc = avgAcc + acc[i+1]
             else badIdxCount = badIdxCount + 1 end
         end
-        acc[1] = avgAcc / (#idxs - badIdxCount)
+        acc[1] = avgAcc / (#idxs - badIdxCount + 0.0001)
     end
     return unpack(acc)
 end

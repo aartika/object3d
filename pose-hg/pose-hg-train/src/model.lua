@@ -1,3 +1,5 @@
+require 'cunn'
+require 'cudnn'
 --- Load up network model or initialize from scratch
 paths.dofile('models/' .. opt.netType .. '.lua')
 
@@ -12,6 +14,8 @@ elseif opt.loadModel ~= 'none' then
     assert(paths.filep(opt.loadModel), 'File not found: ' .. opt.loadModel)
     print('==> Loading model from: ' .. opt.loadModel)
     model = torch.load(opt.loadModel)
+    cudnn.convert(model, nn)
+    model:float()
 
 -- Or we're starting fresh
 else

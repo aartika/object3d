@@ -35,6 +35,7 @@ require 'xlua'
 local Logger = torch.class('Logger')
 
 function Logger:__init(filename, continue, timestamp)
+   print(filename)
    if filename then
       self.name = filename
       os.execute('mkdir -p "' .. paths.dirname(filename) .. '"')

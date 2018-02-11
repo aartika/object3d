@@ -20,6 +20,8 @@ function step(tag)
     local avgLoss, avgAcc = 0.0, 0.0
     local output, err, idx
     local r = ref[tag]
+    print('r', r)
+    print('log file', r.log.name)
     local function evalFn(x) return criterion.output, gradparam end
 
     if tag == 'train' then
@@ -34,6 +36,7 @@ function step(tag)
         isTesting = true
     end
 
+    print('log', r.log)
     for i,sample in loader[set]:run() do
 
         xlua.progress(i, r.iters)
@@ -87,6 +90,8 @@ function step(tag)
         local acc = accuracy(output, label)
         avgLoss = avgLoss + err
         avgAcc = avgAcc + acc
+        -- Print and log some useful performance metrics
+        print(string.format("      %s : Loss: %.7f Acc: %.4f"  % {set, avgLoss / i, avgAcc / i}))
     end
 
     avgLoss = avgLoss / r.iters
@@ -102,6 +107,7 @@ function step(tag)
 
     -- Print and log some useful performance metrics
     print(string.format("      %s : Loss: %.7f Acc: %.4f"  % {set, avgLoss, avgAcc}))
+    print(r.log)
     if r.log then
         r.log:add{
             ['epoch     '] = string.format("%d" % epoch),

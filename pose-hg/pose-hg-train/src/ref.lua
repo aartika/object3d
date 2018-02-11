@@ -105,6 +105,7 @@ end
 annotLabels = {'train', 'valid'}
 annot,ref = {},{}
 for _,l in ipairs(annotLabels) do
+    print('l', l)
     local a, namesFile
     if opt.dataset == 'mpii' and l == 'valid' and opt.finalPredictions == 1 then
         a = hdf5.open(opt.dataDir .. '/annot/test.h5')
@@ -147,6 +148,7 @@ ref.predict = {}
 ref.predict.nsamples = annot.valid.nsamples
 ref.predict.iters = annot.valid.nsamples
 ref.predict.batchsize = 1
+ref.predict.log = Logger(paths.concat(opt.save, 'predict.log'), opt.continue)
 
 -- Default input is assumed to be an image and output is assumed to be a heatmap
 -- This can change if an hdf5 file is used, or if opt.task specifies something different
